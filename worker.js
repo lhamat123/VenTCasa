@@ -22,7 +22,7 @@
 //                        quieres restringirlo mientras pruebas.
 
 const GH_USER   = 'lhamat123';
-const GH_REPO   = 'VenTCasa';
+const GH_REPO   = 'Vhome';
 const GH_BRANCH = 'main';
 const GH_FILE   = 'data.json';
 const SESSION_TTL = 60 * 60 * 6; // 6 horas

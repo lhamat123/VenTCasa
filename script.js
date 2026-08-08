@@ -12,7 +12,7 @@
 //  CONFIGURACIÓN
 // ══════════════════════════════════════════════════
 const GH_USER   = 'lhamat123';    // ← tu usuario GitHub
-const GH_REPO   = 'VenTCasa';     // ← nombre del repo
+const GH_REPO   = 'Vhome';        // ← nombre del repo (donde viven data.json e images/)
 const GH_FILE   = 'data.json';
 const GH_BRANCH = 'main';         // ← rama donde se guardan los datos
 const GH_IMG_DIR= 'images';       // ← carpeta del repo donde se suben las fotos
