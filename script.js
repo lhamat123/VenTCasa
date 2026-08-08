@@ -20,7 +20,7 @@ const GH_IMG_DIR= 'images';       // ← carpeta del repo donde se suben las fot
 // (data.json e imágenes) pasa por un Cloudflare Worker que guarda el token del
 // lado del servidor — ver /worker/README.md para desplegarlo. Reemplaza esta URL
 // por la que te dé `wrangler deploy` (algo como https://tu-worker.tu-cuenta.workers.dev).
-const WORKER_URL = 'https://llave-en-mano-api.TU-SUBDOMINIO.workers.dev';
+const WORKER_URL = 'https://llave-en-mano-api.ventcasa.workers.dev';
 // ══════════════════════════════════════════════════
 
 const AMENITIES_LIST = [
