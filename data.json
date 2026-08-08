@@ -1,1 +1,28 @@
-{"properties":[]}
+{
+  "properties": [
+    {
+      "id": "p1786223905027",
+      "type": "Apartamento",
+      "name": "fghgfh",
+      "address": "fghgfhgfhgfh",
+      "price": 0,
+      "docStatus": "Transferible",
+      "contactName": "",
+      "contactTel": "",
+      "negotiate": true,
+      "surfUtil": 0,
+      "surfConst": 0,
+      "surfTotal": 0,
+      "rooms": 0,
+      "baths": 0,
+      "comedor": 0,
+      "cocina": 0,
+      "terraza": 0,
+      "portal": 0,
+      "description": "",
+      "amenities": [],
+      "mainImage": "",
+      "gallery": []
+    }
+  ]
+}
