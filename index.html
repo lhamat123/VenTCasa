@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLAVE en Mano 🗝 · Inmuebles</title>
+<meta name="description" content="Catálogo de inmuebles: casas, apartamentos, fincas y locales. Busca, filtra y contacta directamente.">
+<meta name="theme-color" content="#0a0c10">
+<meta name="color-scheme" content="dark light">
+<!-- Open Graph: para que los enlaces y QR compartidos muestren vista previa -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="LLAVE en Mano · Inmuebles">
+<meta property="og:description" content="Catálogo de inmuebles: casas, apartamentos, fincas y locales.">
+<meta property="og:locale" content="es_ES">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%A0%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="loading-bar"></div>
+<div id="toast"></div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🏠</div>
+    <div class="logo-text">LLAVE <span>en Mano</span> <span style="font-size:26px;display:inline-block;transform:rotate(90deg);line-height:1;vertical-align:middle">🗝</span></div>
+  </div>
+  <div class="header-right">
+    <div class="stat-pill"><div class="dot"></div><span id="total-count">0 propiedades</span></div>
+    <span id="auth-user-tag"></span>
+    <div class="theme-sw">
+      <button class="tbtn on" id="th-cyber"  onclick="setTheme('cyber')"  title="Cyber">🌌</button>
+      <button class="tbtn"    id="th-night"  onclick="setTheme('night')"  title="Noche">🌙</button>
+      <button class="tbtn"    id="th-light"  onclick="setTheme('light')"  title="Claro">☀️</button>
+      <button class="tbtn"    id="th-beige"  onclick="setTheme('beige')"  title="Beige">📜</button>
+    </div>
+    <button class="hbtn ghost" id="btn-login" onclick="openLogin()" title="Entrar" style="width:36px;height:36px;padding:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px">🔐</button>
+    <button class="hbtn danger" id="btn-logout" onclick="doLogout()" style="display:none">Salir</button>
+    <button class="hbtn primary" id="btn-new" onclick="openFormModal()" style="display:none">＋ Nueva</button>
+  </div>
+</header>
+
+<div class="app">
+  <div class="main">
+    <div class="toolbar">
+      <div class="search-box"><span>🔍</span><input type="text" placeholder="Buscar por nombre, dirección…" id="search-input" aria-label="Buscar propiedades" oninput="renderProperties()"></div>
+      <select class="fsel" id="type-filter" onchange="renderProperties()">
+        <option value="">Todos los tipos</option>
+        <option>Casa</option><option>Apartamento</option><option>Finca</option><option>Local</option>
+      </select>
+      <select class="fsel" id="price-filter" onchange="renderProperties()">
+        <option value="">Cualquier precio</option>
+        <option value="0-50000">Hasta $50k</option>
+        <option value="50000-150000">$50k – $150k</option>
+        <option value="150000-500000">$150k – $500k</option>
+        <option value="500000-99999999">Más de $500k</option>
+      </select>
+      <button class="fav-filter-btn" id="fav-filter-btn" onclick="toggleFavFilter()" title="Filtrar favoritos" style="padding:6px 10px;font-size:16px;gap:4px">&#x2B50;<span class="fav-badge" id="fav-count">0</span></button>
+      <div class="adv-wrap" id="adv-wrap-loc">
+        <button class="adv-filter-btn" id="adv-filter-btn" onclick="toggleAdvPanel('loc',event)">
+          &#x1F3E0; Locales <span class="adv-badge" id="adv-badge" style="display:none">0</span>
+        </button>
+        <div class="adv-panel" id="adv-panel-loc">
+          <div class="adv-panel-title">Filtrar por locales</div>
+          <div id="adv-rows-container"></div>
+          <div class="adv-clear" onclick="clearAdvFilters()">&#x2715; Limpiar</div>
+        </div>
+      </div>
+      <div class="adv-wrap" id="adv-wrap-com">
+        <button class="adv-filter-btn" id="com-filter-btn" onclick="toggleAdvPanel('com',event)">
+          &#x2728; Comodidades <span class="adv-badge" id="com-badge" style="display:none">0</span>
+        </button>
+        <div class="adv-panel" id="adv-panel-com">
+          <div class="adv-panel-title">Filtrar por comodidades</div>
+          <div id="com-rows-container"></div>
+          <div class="adv-clear" onclick="clearComFilters()">&#x2715; Limpiar</div>
+        </div>
+      </div>
+      <div class="adv-wrap" id="adv-wrap-doc">
+        <button class="adv-filter-btn" id="doc-filter-btn" onclick="toggleAdvPanel('doc',event)">
+          &#x1F4C4; Docs <span class="adv-badge" id="doc-badge" style="display:none">0</span>
+        </button>
+        <div class="adv-panel" id="adv-panel-doc">
+          <div class="adv-panel-title">Estado documentación</div>
+          <div id="doc-rows-container"></div>
+          <div class="adv-clear" onclick="clearDocFilters()">&#x2715; Limpiar</div>
+        </div>
+      </div>
+      <select class="fsel" id="sort-filter" onchange="renderProperties()">
+        <option value="">&#x2195; Ordenar por...</option>
+        <option value="price-desc">Mayor precio</option>
+        <option value="price-asc">Menor precio</option>
+        <option value="rooms-desc">Más dormitorios</option>
+        <option value="rooms-asc">Menos dormitorios</option>
+        <option value="surf-desc">Mayor sup. construida</option>
+        <option value="surf-asc">Menor sup. construida</option>
+      </select>
+            <div class="vtog">
+        <button class="vbtn active" id="grid-btn" onclick="setView('grid')" title="Cuadrícula">⊞</button>
+        <button class="vbtn"        id="list-btn" onclick="setView('list')" title="Lista">☰</button>
+      </div>
+    </div>
+    <div class="content-area" id="content-area">
+      <div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-text">Cargando propiedades…</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DETAIL MODAL ══ -->
+<div class="modal-overlay" id="detail-overlay">
+  <div class="modal" id="detail-modal">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+        <div class="modal-title" id="detail-title" style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Detalle</div>
+        <button class="fav-btn" id="detail-fav-btn" onclick="toggleFavFromDetail()" title="Favorito" style="font-size:22px">&#x2606;</button>
+      </div>
+      <button class="modal-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="modal-body" id="detail-body"></div>
+    <div class="modal-footer" id="detail-footer">
+      <button class="btn btn-danger" id="detail-delete-btn" style="margin-right:auto;display:none" onclick="deleteProperty()">🗑 Eliminar</button>
+      <button class="btn btn-ghost" onclick="showPropertyQR()" title="Ver QR de esta propiedad">🔲 QR</button>
+      <button class="btn btn-ghost" onclick="closeDetail()">Cerrar</button>
+      <button class="btn btn-primary" id="detail-edit-btn" style="display:none" onclick="editCurrent()">✏️ Editar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FORM MODAL ══ -->
+<div class="modal-overlay" id="form-overlay">
+  <div class="modal form-modal">
+    <div class="modal-header">
+      <div class="modal-title" id="form-title">Nueva Propiedad</div>
+      <button class="modal-close" onclick="closeFormModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Foto principal -->
+      <div style="margin-bottom:6px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);font-family:'Syne',sans-serif;font-weight:600">Foto principal</div>
+      <div class="image-upload-area" id="main-upload-area" onclick="smartImagePick(curMainImg,'main',onMainImageDone)">
+        <input type="file" id="main-img-input" accept="image/*" style="display:none" onchange="handleMainImage(event)">
+        <span style="font-size:26px">📷</span>
+        <span style="font-size:11px;color:var(--text2)">Clic para subir foto principal</span>
+        <div class="upload-overlay"><span style="font-size:22px">📷</span><span style="font-size:11px;color:#fff">Cambiar imagen</span></div>
+      </div>
+      <div style="text-align:center;font-size:9px;color:var(--text2);margin-bottom:16px" id="main-img-hint"></div>
+
+      <div class="form-grid">
+        <div class="form-section">Identificación</div>
+        <div class="form-group">
+          <label class="form-label">Tipo de inmueble</label>
+          <select class="form-select" id="f-type">
+            <option>Casa</option><option>Apartamento</option><option>Finca</option><option>Local</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nombre / Título</label>
+          <input class="form-input" id="f-name" placeholder="Casa en el Vedado…">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Dirección completa</label>
+          <input class="form-input" id="f-addr" placeholder="Calle 17 No.1205 e/ 20 y 22, Vedado, La Habana">
+        </div>
+
+        <div class="form-section">Precio y contacto</div>
+        <div class="form-group">
+          <label class="form-label">Valor de venta (USD)</label>
+          <input class="form-input" type="number" id="f-price" placeholder="12000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Estado documentación</label>
+          <select class="form-select" id="f-docstatus">
+            <option value="Transferible">✅ Transferible</option>
+            <option value="En Trámites">⏳ En Trámites</option>
+            <option value="Desactualizado">⚠️ Desactualizado</option>
+            <option value="Sin Documento">❌ Sin Documento</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nombre del contacto</label>
+          <input class="form-input" id="f-contact-name" placeholder="Alain Rodríguez">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono / WhatsApp</label>
+          <input class="form-input" id="f-contact-tel" placeholder="+5353105037">
+        </div>
+        <div class="form-group">
+          <label class="form-label">¿Acepta negociación?</label>
+          <select class="form-select" id="f-negotiate">
+            <option value="1">Sí, se escuchan propuestas</option>
+            <option value="0">Precio fijo</option>
+          </select>
+        </div>
+
+        <div class="form-section">Características</div>
+        <div class="form-group">
+          <label class="form-label">Superficie útil (m²)</label>
+          <input class="form-input" type="number" id="f-surf-util" placeholder="120">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Superficie construida (m²)</label>
+          <input class="form-input" type="number" id="f-surf-const" placeholder="140">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Superficie total / solar (m²)</label>
+          <input class="form-input" type="number" id="f-surf-total" placeholder="200">
+        </div>
+        <div class="form-section">Locales</div>
+        <div class="room-bath-selector" id="rb-selector">
+          <!-- generado por JS -->
+        </div>
+
+        <div class="form-section">Descripción</div>
+        <div class="form-group full">
+          <label class="form-label">Descripción de la propiedad</label>
+          <textarea class="form-textarea" id="f-desc" placeholder="Describe la propiedad, su estado, características…" style="min-height:90px"></textarea>
+        </div>
+
+        <div class="form-section">Comodidades</div>
+        <div class="amenities-check" id="amenities-check-list"></div>
+
+        <div class="form-section">Galería de fotos</div>
+        <div class="form-group full">
+          <div class="gallery-upload-area" onclick="document.getElementById('gallery-input').click()">
+            <input type="file" id="gallery-input" accept="image/*" multiple style="display:none" onchange="handleGalleryImages(event)">
+            📸 Clic para agregar fotos adicionales y planos (múltiples)
+          </div>
+          <div class="gallery-previews" id="gallery-previews"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeFormModal()">Cancelar</button>
+      <button class="btn btn-ghost" id="btn-duplicate" onclick="duplicateProperty()" style="display:none">⧉ Duplicar</button>
+      <button class="btn btn-primary" onclick="saveProperty()">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONFIRM DIALOG ══ -->
+<div class="dialog-overlay" id="confirm-overlay">
+  <div class="dialog-box">
+    <div class="dialog-head">
+      <div class="dialog-icon warn">⚠️</div>
+      <div class="dialog-title" id="confirm-title"></div>
+    </div>
+    <div class="dialog-body">
+      <p class="dialog-msg" id="confirm-msg"></p>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn btn-ghost" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn btn-danger" id="confirm-ok">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LOGIN DIALOG ══ -->
+<div class="dialog-overlay" id="login-overlay">
+  <div class="dialog-box">
+    <div class="dialog-head">
+      <div class="dialog-icon info">🔐</div>
+      <div class="dialog-title">Acceso de administrador</div>
+    </div>
+    <div class="dialog-body">
+      <p class="dialog-msg">Ingresa tu contraseña para publicar y editar inmuebles.</p>
+      <div class="form-group"><label class="form-label">Contraseña</label>
+        <input class="form-input" type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <p class="err-msg" id="login-err"></p>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn btn-ghost" onclick="closeLogin()">Cancelar</button>
+      <button class="btn btn-primary" onclick="doLogin()">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DUPLICAR DIALOG ══ -->
+<div class="dialog-overlay" id="dup-overlay">
+  <div class="dialog-box">
+    <div class="dialog-head">
+      <div class="dialog-icon info">⧉</div>
+      <div class="dialog-title">Duplicar propiedad</div>
+    </div>
+    <div class="dialog-body">
+      <p class="dialog-msg">Cambia el nombre y la dirección para la copia. El resto de los datos se mantienen.</p>
+      <div class="form-group">
+        <label class="form-label">Nuevo nombre</label>
+        <input class="form-input" id="dup-name" placeholder="Nombre de la copia" onkeydown="if(event.key==='Enter')document.getElementById('dup-addr').focus()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nueva dirección</label>
+        <input class="form-input" id="dup-addr" placeholder="Dirección" onkeydown="if(event.key==='Enter')confirmDuplicate()">
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn btn-ghost" onclick="closeDupDialog()">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmDuplicate()">⧉ Crear copia</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LIGHTBOX ══ -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="lightbox-nav lightbox-prev" onclick="event.stopPropagation();lightboxNav(-1)" title="Anterior">&#8249;</button>
+  <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()">
+  <button class="lightbox-nav lightbox-next" onclick="event.stopPropagation();lightboxNav(1)" title="Siguiente">&#8250;</button>
+  <div class="lightbox-counter" id="lightbox-counter"></div>
+</div>
+
+<!-- ══ CROPPER + OPTIMIZER (panel unificado) ══ -->
+<!-- ══ CROPPER + OPTIMIZER (portado de Galería) ══ -->
+<div class="cropper-overlay" id="cropper-overlay">
+  <div class="opt-panel active" id="opt-panel-opt">
+    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;margin-bottom:4px">
+      <div class="cropper-title">⚡ Optimizar imagen</div>
+    </div>
+    <canvas id="opt-canvas" style="display:none"></canvas>
+    <canvas id="cropper-canvas" style="display:none"></canvas>
+    <div style="display:flex;gap:5px;width:100%;align-items:flex-start">
+      <!-- Ancho + Alto en un solo frame -->
+      <div class="opt-ctrl" style="flex:1;min-width:0;max-height:150px;overflow:hidden">
+        <label style="display:flex;align-items:center;gap:.4rem">Ancho máx: <span class="opt-range-val" id="opt-val-w">800</span>px
+          <button id="opt-lock-btn" onclick="toggleAspectLock()" title="Bloquear proporción" style="margin-left:auto;background:none;border:1px solid var(--accent);border-radius:5px;color:var(--accent);cursor:pointer;padding:1px 7px;font-size:.75rem;line-height:1.6;transition:all .15s;flex-shrink:0">🔒 1:1</button>
+        </label>
+        <input type="range" min="50" max="2000" value="800" id="opt-rw" oninput="optWidthChanged(this.value)">
+        <div style="display:flex;gap:4px;margin-top:4px">
+          <button id="preset-btn-400" onclick="applyWidthPreset(400)" style="flex:1;padding:2px 0;border-radius:5px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s">400</button>
+          <button id="preset-btn-800" onclick="applyWidthPreset(800)" style="flex:1;padding:2px 0;border-radius:5px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s">800</button>
+          <button id="preset-btn-1200" onclick="applyWidthPreset(1200)" style="flex:1;padding:2px 0;border-radius:5px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s">1200</button>
+        </div>
+        <div style="border-top:1px solid var(--border);margin-top:6px;padding-top:5px">
+          <label>Alto máx: <span class="opt-range-val" id="opt-val-h">600</span>px</label>
+          <input type="range" min="50" max="2000" value="600" id="opt-rh" oninput="optHeightChanged(this.value)" style="width:100%">
+        </div>
+      </div>
+      <!-- Calidad vertical -->
+      <div class="opt-ctrl" style="width:52px;flex-shrink:0;padding:5px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;box-sizing:border-box;max-height:150px">
+        <label style="text-align:center;white-space:nowrap;font-size:9px">Calidad</label>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;width:100%">
+          <input type="range" min="1" max="100" value="80" id="opt-rq"
+            oninput="document.getElementById('opt-val-q').textContent=this.value;optReprocess();_saveOptSettings()"
+            style="writing-mode:vertical-lr;direction:rtl;-webkit-appearance:slider-vertical;appearance:slider-vertical;width:28px;height:60%;max-height:77px;accent-color:var(--accent);cursor:pointer;touch-action:none">
+        </div>
+        <div style="text-align:center;line-height:1.1">
+          <span class="opt-range-val" id="opt-val-q" style="font-size:12px;display:block">80</span>
+
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:5px;width:100%">
+      <div class="opt-ctrl" style="flex:1;min-width:0">
+        <label>Formato</label>
+        <select id="opt-fmt" onchange="optReprocess();_saveOptSettings()" style="width:100%">
+          <option value="image/jpeg">JPG</option>
+          <option value="image/png">PNG</option>
+          <option value="image/webp" selected>WEBP</option>
+        </select>
+      </div>
+      <div class="opt-ctrl" style="flex:1;min-width:0">
+        <label>Paleta de colores</label>
+        <select id="opt-paleta" onchange="optReprocess();_saveOptSettings()" style="width:100%">
+          <option value="full">Color completo</option>
+          <option value="256">256 colores</option>
+          <option value="128">128 colores</option>
+          <option value="64">64 colores</option>
+          <option value="16">16 colores</option>
+        </select>
+      </div>
+    </div>
+    <div class="opt-compare">
+      <div class="opt-compare-box">
+        <div class="opt-compare-img" id="opt-vp-orig" style="cursor:crosshair" ondblclick="inlineCropApply();_flashCropConfirm()">
+          <span class="opt-img-label">Original</span>
+          <img id="opt-img-orig" alt="" style="pointer-events:none">
+          <div id="inline-crop-box" style="position:absolute;border:2px solid var(--accent);box-shadow:0 0 0 9999px rgba(0,0,0,.55);box-sizing:border-box;cursor:move;display:none">
+            <div class="icrop-handle" data-h="tl" style="position:absolute;width:10px;height:10px;background:var(--accent);border-radius:2px;top:-5px;left:-5px;cursor:nw-resize"></div>
+            <div class="icrop-handle" data-h="tr" style="position:absolute;width:10px;height:10px;background:var(--accent);border-radius:2px;top:-5px;right:-5px;cursor:ne-resize"></div>
+            <div class="icrop-handle" data-h="bl" style="position:absolute;width:10px;height:10px;background:var(--accent);border-radius:2px;bottom:-5px;left:-5px;cursor:sw-resize"></div>
+            <div class="icrop-handle" data-h="br" style="position:absolute;width:10px;height:10px;background:var(--accent);border-radius:2px;bottom:-5px;right:-5px;cursor:se-resize"></div>
+            <div id="icrop-dims" style="position:absolute;bottom:6px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.72);color:#00e5ff;font-family:'Syne',sans-serif;font-weight:700;font-size:10px;padding:2px 7px;border-radius:5px;white-space:nowrap;pointer-events:none"></div>
+            <button id="inline-crop-apply-btn" onclick="inlineCropApply();_flashCropConfirm()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" style="display:flex;position:absolute;top:6px;right:6px;z-index:25;align-items:center;justify-content:center;background:var(--accent);border:none;border-radius:7px;width:34px;height:34px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.6);padding:0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 2 6 6 2 6"/><polyline points="18 22 18 18 22 18"/><path d="M6 6h12a2 2 0 0 1 2 2v8"/><path d="M18 18H6a2 2 0 0 1-2-2V6"/></svg>
+            </button>
+            <button id="icrop-lock-btn" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" onclick="toggleCropLock()" title="Bloquear proporción del recorte"
+              style="display:flex;position:absolute;top:6px;left:6px;z-index:25;align-items:center;justify-content:center;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.25);border-radius:7px;width:28px;height:28px;cursor:pointer;font-size:14px;padding:0;transition:all .15s">🔓</button>
+          </div>
+          <span class="opt-zoom-hint" id="inline-crop-hint">✂️ arrastra para recortar</span>
+        </div>
+        <div class="opt-stats" id="opt-stats-orig"></div>
+      </div>
+      <div class="opt-compare-box">
+        <div class="opt-compare-img" id="opt-vp-result" style="position:relative">
+          <span class="opt-img-label">Optimizada</span>
+          <img id="opt-img-result" alt="">
+          <button class="opt-zoom-reset" id="opt-reset-result" onclick="optZoomReset()">↺ reset</button>
+          <span class="opt-zoom-hint">🔍 scroll · arrastra</span>
+          <div style="position:absolute;bottom:10px;left:0;right:0;display:flex;gap:8px;justify-content:center;z-index:30;padding:0 8px">
+            <button class="crop-btn cancel" onclick="closeCropper()" style="flex:1;backdrop-filter:blur(8px);background:rgba(30,34,44,.82);font-size:11px;padding:7px 0">Cancelar</button>
+            <button class="crop-btn apply" onclick="applyOptimized()" style="flex:1;font-size:11px;padding:7px 0">✅ Usar</button>
+          </div>
+        </div>
+        <div class="opt-stats" id="opt-stats-result"></div>
+      </div>
+    </div>
+    <div class="opt-btns" style="display:none">
+      <button class="crop-btn cancel" onclick="closeCropper()">Cancelar</button>
+      <button class="crop-btn apply" onclick="applyOptimized()">✅ Usar optimizada</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QR OVERLAY ══ -->
+<div id="qr-overlay" onclick="if(event.target===this)closeQR()">
+  <div id="qr-card">
+    <div id="qr-title">QR de la propiedad</div>
+    <div id="qr-white-box">
+      <img id="qr-img" src="" alt="QR">
+    </div>
+    <div id="qr-url"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button id="qr-download" onclick="downloadQR()">⬇ Descargar</button>
+      <button onclick="closeQR()">Cerrar</button>
+    </div>
+  </div>
+</div>
+<!-- ══ IMAGE ACTION SHEET (portado de Galería) ══ -->
+<div id="imgActionModal">
+  <div class="img-action-sheet">
+    <div class="img-action-handle"></div>
+    <div class="img-action-head">
+      <img class="img-action-preview" id="iamPreview" src="" alt="">
+      <div>
+        <div class="img-action-title">Imagen</div>
+        <div class="img-action-sub" id="iamSub">¿Qué deseas hacer?</div>
+      </div>
+    </div>
+    <div class="img-action-opts">
+      <button class="img-action-btn" id="iamBtnCrop">
+        <span class="iai-icon">✂️</span>
+        <span class="iai-lbl"><span>Recortar y optimizar</span><span class="iai-desc">Abre la imagen para recortar y ajustar</span></span>
+      </button>
+      <div class="img-action-btn iai-paste" id="iamBtnPaste" style="display:none;position:relative;overflow:hidden">
+        <span class="iai-icon">📋</span>
+        <span class="iai-lbl"><span id="iamPasteLabel">Pegar imagen</span><span class="iai-desc" id="iamPasteDesc">Mantén pulsado → "Pegar" (móvil) · Ctrl+V (escritorio)</span></span>
+        <div id="pasteTrap" contenteditable="true" tabindex="0" inputmode="none" enterkeyhint="done"
+          style="position:absolute;inset:0;opacity:0;cursor:pointer;-webkit-user-select:text;user-select:text;outline:none;caret-color:transparent"
+          aria-label="Toca aquí y elige Pegar"></div>
+      </div>
+      <button class="img-action-btn iai-new" id="iamBtnNew">
+        <span class="iai-icon">📁</span>
+        <span class="iai-lbl"><span>Cargar imagen nueva</span><span class="iai-desc">Seleccionar desde el dispositivo</span></span>
+      </button>
+      <button class="img-action-btn" id="iamBtnDelete" style="display:none;background:rgba(255,82,82,.08);border-color:rgba(255,82,82,.3);color:var(--red)">
+        <span class="iai-icon">🗑️</span>
+        <span class="iai-lbl"><span>Eliminar foto</span><span class="iai-desc">Quitar esta foto del álbum</span></span>
+      </button>
+      <button class="img-action-btn iai-cancel" id="iamBtnCancel">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

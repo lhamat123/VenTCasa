@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLAVE en Mano — Cómo funciona y cómo protegerla</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c10; --surface:#12151c; --surface2:#1a1e28; --border:#252a38;
+  --accent:#00e5ff; --accent2:#7c4dff; --green:#00e676; --red:#ff5252; --yellow:#ffd740;
+  --text:#e8eaf0; --text2:#8892a4;
+  --r-sm:6px; --r-md:10px; --r-lg:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:radial-gradient(circle at 15% 0%, rgba(0,229,255,.05) 0%, transparent 45%), var(--bg);
+  color:var(--text); font-family:'DM Mono',monospace; line-height:1.65;
+  padding:48px 20px 100px;
+}
+.wrap{max-width:800px;margin:0 auto}
+h1,h2,h3{font-family:'Syne',sans-serif}
+header.hero{margin-bottom:56px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;font-size:11px;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--accent);border:1px solid rgba(0,229,255,.3);
+  background:rgba(0,229,255,.06);padding:5px 12px;border-radius:999px;margin-bottom:18px;
+}
+h1{font-size:34px;font-weight:800;letter-spacing:-.5px;margin-bottom:12px}
+h1 span{color:var(--accent)}
+.lede{color:var(--text2);font-size:15px;max-width:60ch}
+
+section{margin-bottom:56px}
+h2{font-size:22px;font-weight:700;display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.h2-num{
+  width:30px;height:30px;flex:0 0 auto;border-radius:var(--r-sm);
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#00121a;
+  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;
+}
+h3{font-size:15px;font-weight:700;color:var(--text);margin:22px 0 10px}
+p{color:var(--text2);font-size:14px;margin-bottom:12px}
+p strong{color:var(--text);font-weight:500}
+a{color:var(--accent)}
+
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:22px 24px;margin-bottom:16px;
+}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.grid2{grid-template-columns:1fr}}
+.feat{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);
+  padding:16px 18px;
+}
+.feat .ic{font-size:20px;margin-bottom:8px;display:block}
+.feat h4{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.feat p{font-size:12.5px;margin:0;color:var(--text2)}
+
+/* diagrama de flujo */
+.diagram{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:28px 20px;margin-bottom:16px;overflow-x:auto;
+}
+.flow{display:flex;align-items:center;gap:0;min-width:600px;justify-content:center}
+.node{
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md);
+  padding:14px 18px;text-align:center;min-width:130px;
+}
+.node.you{border-color:rgba(0,230,118,.4)}
+.node.worker{border-color:rgba(0,229,255,.4)}
+.node.github{border-color:rgba(124,77,255,.4)}
+.node .ic{font-size:22px;display:block;margin-bottom:6px}
+.node .lbl{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--text);display:block}
+.node .sub{font-size:10px;color:var(--text2);margin-top:3px;display:block}
+.arrow{flex:0 0 auto;width:50px;text-align:center;color:var(--text2);font-size:18px;position:relative}
+.arrow .cap{position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:9px;white-space:nowrap;color:var(--text2)}
+
+/* pasos */
+.steps{counter-reset:step}
+.step{
+  display:flex;gap:16px;padding:18px 0;border-top:1px solid var(--border);
+}
+.step:first-child{border-top:none}
+.step-num{
+  counter-increment:step;flex:0 0 auto;width:28px;height:28px;border-radius:50%;
+  background:var(--surface2);border:1px solid var(--border);color:var(--accent);
+  font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;
+}
+.step-num::before{content:counter(step)}
+.step-body h4{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px}
+.step-body p{font-size:13px;margin-bottom:8px}
+
+code, .code{
+  font-family:'DM Mono',monospace;background:var(--surface2);border:1px solid var(--border);
+  border-radius:5px;padding:2px 7px;font-size:12.5px;color:var(--accent);
+}
+pre{
+  background:#05070a;border:1px solid var(--border);border-radius:var(--r-md);
+  padding:14px 16px;overflow-x:auto;margin:10px 0 14px;
+}
+pre code{background:none;border:none;padding:0;color:#a6f2ff;font-size:12.5px;line-height:1.7}
+
+.callout{
+  border-radius:var(--r-md);padding:14px 16px;font-size:13px;margin:14px 0;
+  border:1px solid; display:flex;gap:10px;align-items:flex-start;
+}
+.callout .ic{flex:0 0 auto;font-size:16px}
+.callout p{margin:0;color:var(--text)}
+.callout.ok{background:rgba(0,230,118,.06);border-color:rgba(0,230,118,.3)}
+.callout.warn{background:rgba(255,215,64,.06);border-color:rgba(255,215,64,.35)}
+.callout.danger{background:rgba(255,82,82,.06);border-color:rgba(255,82,82,.35)}
+
+.checklist{list-style:none}
+.checklist li{
+  display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--border);font-size:13.5px;color:var(--text);
+}
+.checklist li:first-child{border-top:none}
+.checklist li::before{content:'✓';color:var(--green);font-weight:700}
+
+footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--border);color:var(--text2);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">🔑 Documentación</div>
+    <h1>LLAVE en Mano<br><span>cómo funciona</span> y cómo protegerla</h1>
+    <p class="lede">Esta guía explica, sin tecnicismos, qué hace la app por dentro y los pasos para dejarla configurada de forma que <strong>solo tú (el administrador) puedas agregar, editar o borrar propiedades</strong> — cualquier otra persona solo puede mirar el catálogo.</p>
+  </header>
+
+  <section>
+    <h2><span class="h2-num">1</span> Qué hace la app</h2>
+    <p>Es un catálogo de inmuebles de una sola página. Cualquier visitante puede buscar, filtrar y ver el detalle de cada propiedad — nadie necesita cuenta ni contraseña para eso.</p>
+    <div class="grid2">
+      <div class="feat"><span class="ic">🔍</span><h4>Búsqueda y filtros</h4><p>Por nombre, tipo, precio, comodidades, locales y estado de la documentación.</p></div>
+      <div class="feat"><span class="ic">🗂️</span><h4>Vista grid o lista</h4><p>Con paginación (12 propiedades por página) para que no se sature con muchos inmuebles.</p></div>
+      <div class="feat"><span class="ic">⭐</span><h4>Favoritos</h4><p>Cada visitante puede marcar propiedades; se guarda en su propio navegador.</p></div>
+      <div class="feat"><span class="ic">🖼️</span><h4>Galería con zoom</h4><p>Fotos principales y galería por propiedad, con visor ampliado.</p></div>
+      <div class="feat"><span class="ic">💬</span><h4>Contacto directo</h4><p>Botón de WhatsApp directo al número del dueño de cada inmueble.</p></div>
+      <div class="feat"><span class="ic">🔲</span><h4>QR para compartir</h4><p>Cada propiedad genera un código QR que abre directamente su ficha.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="h2-num">2</span> Dónde viven los datos</h2>
+    <p>No hay una base de datos tradicional. Las propiedades se guardan en un archivo (<code>data.json</code>) dentro de tu propio repositorio de GitHub, y las fotos se sirven desde ahí mismo. Es gratis y no depende de ningún servidor que tengas que mantener.</p>
+    <p>La parte importante es <strong>cómo se escribe</strong> ese archivo cuando agregas o editas una propiedad — de eso trata el resto de esta guía.</p>
+  </section>
+
+  <section>
+    <h2><span class="h2-num">3</span> Cómo se protege la edición</h2>
+    <p>Antes, la contraseña de administrador y el token de GitHub vivían directamente en el código de la página — cualquiera que supiera mirar el código fuente podía copiarlos y editar tu catálogo sin permiso. Ahora el flujo es distinto:</p>
+
+    <div class="diagram">
+      <div class="flow">
+        <div class="node you"><span class="ic">🧑</span><span class="lbl">Visitante</span><span class="sub">solo lectura</span></div>
+        <div class="arrow"><span class="cap">ve el catálogo</span>→</div>
+        <div class="node github"><span class="ic">🗃️</span><span class="lbl">GitHub</span><span class="sub">data.json + fotos</span></div>
+      </div>
+    </div>
+    <div class="diagram">
+      <div class="flow">
+        <div class="node you"><span class="ic">🔐</span><span class="lbl">Administrador</span><span class="sub">solo con contraseña</span></div>
+        <div class="arrow"><span class="cap">pide guardar</span>→</div>
+        <div class="node worker"><span class="ic">🛡️</span><span class="lbl">Worker</span><span class="sub">guarda el token</span></div>
+        <div class="arrow"><span class="cap">escribe</span>→</div>
+        <div class="node github"><span class="ic">🗃️</span><span class="lbl">GitHub</span><span class="sub">data.json + fotos</span></div>
+      </div>
+    </div>
+    <p>El <strong>token de GitHub nunca llega al navegador</strong> — queda guardado únicamente dentro de Cloudflare (el servicio donde vive el Worker). Cuando entras al panel de administración, la app solo te pide tu contraseña; si es correcta, el Worker se encarga de hablar con GitHub por ti.</p>
+
+    <div class="callout ok">
+      <span class="ic">✅</span>
+      <p>Resultado: aunque alguien copie el código completo de tu página (`Ver código fuente` del navegador), no va a encontrar ningún token ahí — no hay forma de editar tu catálogo sin tu contraseña.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="h2-num">4</span> Configurarlo paso a paso</h2>
+    <p>Esto se hace una sola vez. Necesitas una cuenta gratuita de <a href="https://dash.cloudflare.com/sign-up" target="_blank" rel="noopener">Cloudflare</a> y tener <a href="https://nodejs.org" target="_blank" rel="noopener">Node.js</a> instalado en tu computadora.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Instala la herramienta de Cloudflare (wrangler)</h4>
+          <p>Desde una terminal:</p>
+          <pre><code>npm install -g wrangler
+wrangler login</code></pre>
+          <p>El segundo comando abre el navegador para conectar la herramienta con tu cuenta de Cloudflare.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Crea un token de GitHub solo para este proyecto</h4>
+          <p>En GitHub: <code>Settings → Developer settings → Fine-grained tokens → Generate new token</code>.</p>
+          <p>Elige <strong>"Only select repositories"</strong> y selecciona únicamente el repo <code>Vhome</code>. En permisos, dale <strong>"Contents: Read and write"</strong> y nada más. Copia el token — solo se muestra una vez.</p>
+          <div class="callout warn">
+            <span class="ic">⚠️</span>
+            <p>Este token es la llave real. A partir de este paso solo va a vivir dentro de Cloudflare — no lo pegues en ningún archivo del proyecto ni lo compartas por chat o correo.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Publica el Worker</h4>
+          <p>Desde la carpeta <code>worker/</code> del proyecto:</p>
+          <pre><code>wrangler deploy</code></pre>
+          <p>Te va a dar una URL parecida a <code>https://llave-en-mano-api.tu-subdominio.workers.dev</code>. Guárdala, la usas en el paso 5.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Guarda tus secretos en Cloudflare</h4>
+          <p>Cada comando te va a pedir el valor por separado (no queda escrito en tu historial de terminal):</p>
+          <pre><code>wrangler secret put GITHUB_TOKEN
+wrangler secret put APP_PASS
+wrangler secret put SESSION_SECRET</code></pre>
+          <ul style="margin:0 0 0 18px;font-size:13px;color:var(--text2)">
+            <li style="margin-bottom:4px"><code>GITHUB_TOKEN</code> → el token del paso 2</li>
+            <li style="margin-bottom:4px"><code>APP_PASS</code> → la contraseña con la que vas a entrar al panel</li>
+            <li><code>SESSION_SECRET</code> → cualquier cadena larga y aleatoria (ej. <code>openssl rand -hex 32</code>)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Conecta la página con el Worker</h4>
+          <p>En <code>index.html</code> (o <code>script.js</code> si ya lo separaste), busca:</p>
+          <pre><code>const WORKER_URL = 'https://llave-en-mano-api.TU-SUBDOMINIO.workers.dev';</code></pre>
+          <p>y reemplaza esa URL por la real que te dio <code>wrangler deploy</code>.</p>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>(Recomendado) Limita quién puede llamar al Worker</h4>
+          <p>En <code>worker/wrangler.toml</code>, cambia <code>ALLOWED_ORIGIN = "*"</code> por el dominio real donde publiques la página, y vuelve a correr <code>wrangler deploy</code>. Así, aunque alguien copie tu página completa, su copia no va a poder guardar cambios en tu repo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="h2-num">5</span> Cómo usarlo desde el día a día</h2>
+    <p>Una vez configurado, el uso diario es simple:</p>
+    <ul class="checklist">
+      <li>Cualquier visitante entra al link de la página y ve el catálogo — sin login.</li>
+      <li>Tú tocas el candado 🔒 arriba a la derecha, escribes tu contraseña y entras como editor.</li>
+      <li>Mientras estás dentro, aparecen los botones de agregar, editar y borrar propiedades.</li>
+      <li>Tu sesión de administrador dura 6 horas o hasta que cierres sesión — después hay que volver a poner la contraseña.</li>
+      <li>Si alguien más necesita editar, compártele solo la contraseña — nunca hace falta compartir ningún token.</li>
+    </ul>
+  </section>
+
+  <footer>
+    Guía generada para el proyecto "LLAVE en Mano". El detalle técnico completo del Worker está en <code>worker/README.md</code> dentro del proyecto.
+  </footer>
+
+</div>
+</body>
+</html>

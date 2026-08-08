@@ -1,0 +1,10 @@
+name = "llave-en-mano-api"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+# No es secreta: restringe qué sitios pueden llamar al Worker.
+# Cámbiala por el dominio real donde publiques index.html.
+# Ejemplos: "https://tuusuario.github.io" o "https://llave-en-mano.pages.dev"
+# Usa "*" solo mientras pruebas en local.
+[vars]
+ALLOWED_ORIGIN = "*"
