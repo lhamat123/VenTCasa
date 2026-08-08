@@ -1954,7 +1954,7 @@ function applyOptimized(){ _saveOptSettings(); if(!optCroppedBlob&&!optCroppedDa
     if(action==='new'){ const i=document.createElement('input'); i.type='file'; i.accept='image/*'; i.onchange=ev=>{ if(ev.target.files[0]) openCropper(ev.target.files[0],cropMode,onDone); }; i.click(); return; }
     if(action==='crop'){
       if(currentSrc&&currentSrc.length>4){
-        const img=new Image(); img.onload=()=>{ cropperImg=img; _optOriginalImg=img; _inlineCrop=null; optCroppedDataUrl=null; optCroppedBlob=null; cropperCallback=onDone; document.getElementById('cropper-overlay').classList.add('open'); _loadFullImageToOpt(img); }; img.src=currentSrc;
+        const img=new Image(); img.crossOrigin='anonymous'; img.onload=()=>{ cropperImg=img; _optOriginalImg=img; _inlineCrop=null; optCroppedDataUrl=null; optCroppedBlob=null; cropperCallback=onDone; document.getElementById('cropper-overlay').classList.add('open'); _loadFullImageToOpt(img); }; img.src=currentSrc;
       }
       return;
     }
